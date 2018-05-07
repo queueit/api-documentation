@@ -1,0 +1,114 @@
+//Find the below code for how to use and interact with the RESTful methods of the API
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
+
+public class JavaAPISample {
+
+    public static void main(String[] args) throws IOException {
+        JavaAPISample apiEvent = new JavaAPISample();
+        apiEvent.GetEvent();
+        apiEvent.CreateorUpdateEvent();
+    }
+
+    private void CreateorUpdateEvent() throws IOException {
+
+        String url = "https://{customerid}.api2.test.queue-it.net/2_0/event/{myEventId}.";
+        String apiKey = "Your api key available at /account/security page under APi-keys tab in Go platform";
+
+        String eventData = "{\n"
+                + "  \"DisplayName\": \"the tt sale\",\n"
+                + "  \"RedirectUrl\": \"https://www.ticketania.com/supersale\",\n"
+                + "  \"Description\": \"Ticketania super sale\",\n"
+                + "  \"TimeZone\": \"UTC\",\n"
+                + "  \"TimeZonePostfix\": \"DST\",\n"
+                + "  \"PreQueueStartTime\": \"2018-05-05T08:47:34.0518179Z\",\n"
+                + "  \"EventStartTime\": \"2018-05-05T09:17:34.0518179Z\",\n"
+                + "  \"EventEndTime\": \"2018-05-09T09:17:34.0518179Z\",\n"
+                + "  \"EventCulture\": \"en-US\",\n"
+                + "  \"MaxNoOfRedirectsPrQueueId\": \"3\",\n"
+                + "  \"QueueNumberValidityInMinutes\": \"10\",\n"
+                + "  \"AfterEventLogic\": \"RedirectUsersToSpecialPage\",\n"
+                + "  \"AfterEventRedirectPage\": \"https://www.ticketania.com\",\n"
+                + "  \"AfterEventEndUserRedirectsEnabled\": null,\n"
+                + "  \"UseSSL\": \"Auto\",\n"
+                + "  \"JavaScriptSupportEnabled\": \"False\",\n"
+                + "  \"TargetUrlSupportEnabled\": \"True\",\n"
+                + "  \"SafetyNetMode\": \"OutputThroughput\",\n"
+                + "  \"KnowUserSecurity\": \"HMACSHA256\",\n"
+                + "  \"KnowUserSecretKey\": \"skfsdfjsgjfghsfjgjriwery83476weyf\",\n"
+                + "  \"CustomLayout\": \"Default layout by Queue-it\",\n"
+                + "  \"TargetUrlValidationRegex\": \"(?#validationrule)(^https?://([^/]*\\\\.)?ticketania\\\\.com($|/))\",\n"
+                + "  \"DomainAlias\": \"ttsale\",\n"
+                + "  \"AllowedCustomLayouts\": [\n"
+                + "    \"Default layout by Queue-it\"\n"
+                + "  ],\n"
+                + "  \"BrowserCultureEnabled\": \"True\",\n"
+                + "  \"IdleQueueLogic\": \"RedirectUsersToSpecialPage\",\n"
+                + "  \"IdleQueueRedirectPage\": \"https://www.ticketania.com\",\n"
+                + "  \"CaptchaType\": null,\n"
+                + "  \"IsTest\": \"False\",\n"
+                + "  \"RequireKey\": null\n}";
+
+        try {
+            //It change the apostrophe char to double colon char, to form a correct JSON string
+            eventData = eventData.replace("'", "\"");
+
+            //make connection
+            URL resource = new URL(url);
+            HttpURLConnection connection = (HttpURLConnection) resource.openConnection();
+            
+            //It Content Type is so importan to support JSON call
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setRequestProperty("api-key", apiKey);
+
+            //use post mode
+            connection.setDoOutput(true);
+            connection.setRequestMethod("PUT");
+
+            byte[] outputInBytes = eventData.getBytes("UTF-8");
+            OutputStream result = connection.getOutputStream();
+            result.write(outputInBytes);
+            result.close();
+            connection.getInputStream();
+        } 
+        catch (IOException ex) {
+            System.out.println("Error! " + ex);
+            //Use your favorit logging framework to log the exceptoin
+        }
+    }
+
+    private void GetEvent() throws IOException {
+        String url = "https://{customerid}.api2.test.queue-it.net/2_0/event";
+        String apiKey = "Your api key available at /account/security page under APi-keys tab in Go platform";
+
+        try {
+            //make connection
+            URL resource = new URL(url);
+            URLConnection connection = resource.openConnection();
+            
+            //It Content Type is so importan to support JSON call
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setRequestProperty("api-key", apiKey);
+
+            //get result
+            BufferedReader result = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            StringBuilder response = new StringBuilder();
+            String inputLine;
+            while ((inputLine = result.readLine()) != null) {
+                response.append(inputLine);
+                System.out.println("Success! " + inputLine);
+            }
+            result.close();
+        } 
+        catch (IOException ex) {
+            System.out.println("Error! " + ex);
+            //Use your favorit logging framework to log the exceptoin
+        }
+    }
+}
