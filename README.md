@@ -1,114 +1,89 @@
-//Find the below code for how to use and interact with the RESTful methods of the API
+DisplayName: 
+The name of the event
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
+RedirectUrl: 
+This is the default target URL to redirect to after leaving the queue. Required valid URL
 
-public class JavaAPISample {
+Description: 
+Description of the event
 
-    public static void main(String[] args) throws IOException {
-        JavaAPISample apiEvent = new JavaAPISample();
-        apiEvent.GetEvent();
-        apiEvent.CreateorUpdateEvent();
-    }
+TimeZone: 
+Time zone of the event. Required name of time zone from available options found here: http://support.microsoft.com/kb/973627
 
-    private void CreateorUpdateEvent() throws IOException {
+TimeZonePostfix: 
+Text to be displayed after a time value (e.g. event start time)
 
-        String url = "https://{customerid}.api2.test.queue-it.net/2_0/event/{myEventId}.";
-        String apiKey = "Your api key available at /account/security page under APi-keys tab in Go platform";
+PreQueueStartTime: 
+Pre queue start time of the event. Required date string expressed in either Unix Time (ex. \/Date(1310669017000)\/) or ISO-8601 (ex. 2015-01-06T19:34:58.8082444Z) format
 
-        String eventData = "{\n"
-                + "  \"DisplayName\": \"the tt sale\",\n"
-                + "  \"RedirectUrl\": \"https://www.ticketania.com/supersale\",\n"
-                + "  \"Description\": \"Ticketania super sale\",\n"
-                + "  \"TimeZone\": \"UTC\",\n"
-                + "  \"TimeZonePostfix\": \"DST\",\n"
-                + "  \"PreQueueStartTime\": \"2018-05-05T08:47:34.0518179Z\",\n"
-                + "  \"EventStartTime\": \"2018-05-05T09:17:34.0518179Z\",\n"
-                + "  \"EventEndTime\": \"2018-05-09T09:17:34.0518179Z\",\n"
-                + "  \"EventCulture\": \"en-US\",\n"
-                + "  \"MaxNoOfRedirectsPrQueueId\": \"3\",\n"
-                + "  \"QueueNumberValidityInMinutes\": \"10\",\n"
-                + "  \"AfterEventLogic\": \"RedirectUsersToSpecialPage\",\n"
-                + "  \"AfterEventRedirectPage\": \"https://www.ticketania.com\",\n"
-                + "  \"AfterEventEndUserRedirectsEnabled\": null,\n"
-                + "  \"UseSSL\": \"Auto\",\n"
-                + "  \"JavaScriptSupportEnabled\": \"False\",\n"
-                + "  \"TargetUrlSupportEnabled\": \"True\",\n"
-                + "  \"SafetyNetMode\": \"OutputThroughput\",\n"
-                + "  \"KnowUserSecurity\": \"HMACSHA256\",\n"
-                + "  \"KnowUserSecretKey\": \"skfsdfjsgjfghsfjgjriwery83476weyf\",\n"
-                + "  \"CustomLayout\": \"Default layout by Queue-it\",\n"
-                + "  \"TargetUrlValidationRegex\": \"(?#validationrule)(^https?://([^/]*\\\\.)?ticketania\\\\.com($|/))\",\n"
-                + "  \"DomainAlias\": \"ttsale\",\n"
-                + "  \"AllowedCustomLayouts\": [\n"
-                + "    \"Default layout by Queue-it\"\n"
-                + "  ],\n"
-                + "  \"BrowserCultureEnabled\": \"True\",\n"
-                + "  \"IdleQueueLogic\": \"RedirectUsersToSpecialPage\",\n"
-                + "  \"IdleQueueRedirectPage\": \"https://www.ticketania.com\",\n"
-                + "  \"CaptchaType\": null,\n"
-                + "  \"IsTest\": \"False\",\n"
-                + "  \"RequireKey\": null\n}";
+EventStartTime: 
+Queue start time of the event. Required date string expressed in either Unix Time (ex. \/Date(1310669017000)\/) or ISO-8601 (ex. 2015-01-06T19:34:58.8082444Z) format
 
-        try {
-            //It change the apostrophe char to double colon char, to form a correct JSON string
-            eventData = eventData.replace("'", "\"");
+EventEndTime: 
+End time of the event. Required date string expressed in either Unix Time (ex. \/Date(1310669017000)\/) or ISO-8601 (ex. 2015-01-06T19:34:58.8082444Z) format
 
-            //make connection
-            URL resource = new URL(url);
-            HttpURLConnection connection = (HttpURLConnection) resource.openConnection();
-            
-            //It Content Type is so importan to support JSON call
-            connection.setRequestProperty("Content-Type", "application/json");
-            connection.setRequestProperty("api-key", apiKey);
+EventCulture: 
+Culture/language of the event. Optional name of language culture from available options found here: http://msdn.microsoft.com/en-us/library/ee825488%28v=cs.20%29.aspx. If not specified default value will be en-US
 
-            //use post mode
-            connection.setDoOutput(true);
-            connection.setRequestMethod("PUT");
+MaxNoOfRedirectsPrQueueId: 
+The maximum allowed number of redirects pr. queue number/id. Required number between 1 and 20 (both included)
 
-            byte[] outputInBytes = eventData.getBytes("UTF-8");
-            OutputStream result = connection.getOutputStream();
-            result.write(outputInBytes);
-            result.close();
-            connection.getInputStream();
-        } 
-        catch (IOException ex) {
-            System.out.println("Error! " + ex);
-            //Use your favorit logging framework to log the exceptoin
-        }
-    }
+QueueNumberValidityInMinutes: 
+The validity/lifetime minutes of any queue number issued. Required number between 5 and 60 (both included)
 
-    private void GetEvent() throws IOException {
-        String url = "https://{customerid}.api2.test.queue-it.net/2_0/event";
-        String apiKey = "Your api key available at /account/security page under APi-keys tab in Go platform";
+AfterEventLogic: 
+The post queue setting, e.g. what happens when the event is over/ended. Required enum value from one of the following: KeepUsersOnAfterEventPage | RedirectUsersToSpecialPage | RedirectUsersToTargetPage
 
-        try {
-            //make connection
-            URL resource = new URL(url);
-            URLConnection connection = resource.openConnection();
-            
-            //It Content Type is so importan to support JSON call
-            connection.setRequestProperty("Content-Type", "application/json");
-            connection.setRequestProperty("api-key", apiKey);
+AfterEventRedirectPage: 
+If AfterEventLogic is set to RedirectUsersToSpecialPage you need to specify the URL of this page. Optional valid Absolute URL
 
-            //get result
-            BufferedReader result = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            StringBuilder response = new StringBuilder();
-            String inputLine;
-            while ((inputLine = result.readLine()) != null) {
-                response.append(inputLine);
-                System.out.println("Success! " + inputLine);
-            }
-            result.close();
-        } 
-        catch (IOException ex) {
-            System.out.println("Error! " + ex);
-            //Use your favorit logging framework to log the exceptoin
-        }
-    }
-}
+AfterEventEndUserRedirectsEnabled: 
+Whether or not end users should be allowed to complete their queue journey even after event end time occurs. Optional True or False value
+
+UseSSL: 
+SSL/HTTPS security setting of the event. Required enum value from one of the following: False | True | Auto
+
+JavaScriptSupportEnabled: 
+Optional True or False value, whether or not javascript client support should be enabled. If not specified False will be used. To enable SimpleLink behavior, set this to False and 'KnowUserSecurity' to 'None'
+
+TargetUrlSupportEnabled: 
+Whether or not target URL parameter should be supported. Optional True or False value
+
+SafetyNetMode: 
+Safetynet setting for the event. Required enum value from one of the following: Disabled | ProtectionAndQueueSequence | RelaxedProtectionAndQueueSequence | OutputThroughput. Compared to our Go-platform, 'Disabled' equals 'Always - queue mode', 'ProtectionAndQueueSequence' equals 'SafetyNet (Burst protection), only visible above threshhold', 'RelaxedProtectionAndQueueSequence' equals 'SafetyNet (Normal), only visible above threshhold', and 'OutputThroughput' equals 'SafetyNet (Mixed-Mode)'
+
+KnowUserSecurity: 
+Known user security setting if you are using known user implementation e.g. not enqueing via javascript. Required enum value from one of the following: None | Simple | HMACSHA256 | SimpleWithTimestamp | MD5Hash | KnownUserV3. Compared to our Go-platform, 'Simple' equals 'Simple hash value', 'HMACSHA256' equals 'Hash-based Message Authentication Code', 'SimpleWithTimestamp' equals 'Simple hash value based on timestamp', 'MD5Hash' equals 'QueueIT Security (MD5 hash value)', and 'KnownUserV3' equals 'QueueIT Security V3'. To enable SimpleLink behavior, set this to 'None' and 'JavaScriptSupportEnabled' to False
+
+KnowUserSecretKey: 
+Optional event specific secret key for known user security. If not specified the default known user secret key will be used
+
+CustomLayout: 
+Required name of your own custom layout or one of our default layouts being 'Default layout by Queue-it', 'Christmas Layout by Queue-it', or 'Ticket Layout by Queue-it'. Optional text with a max length of 256 characters
+
+TargetUrlValidationRegex: 
+The pattern is used for regular expression validation of the target URL parameter. Optional regular expression pattern
+
+DomainAlias: 
+Optional event specific domain alias (CNAME). If not specified the default (q.queue-it.net) will be used
+
+AllowedCustomLayouts: 
+Optional list of names of the event specific layouts allowed. Optional string array of maximum 30 elements
+
+BrowserCultureEnabled: 
+Whether or not language should be detected from browser settings. Optional True or False value
+
+IdleQueueLogic: 
+The idle setting, e.g. what happens before pre queue start. Required enum value from one of the following: UseBeforePage | RedirectUsersToSpecialPage | RedirectUsersToTargetPage
+
+IdleQueueRedirectPage: 
+If IdleQueueLogic is set to RedirectUsersToSpecialPage you need to specify the URL of this page. Optional valid Absolute URL
+
+CaptchaType: 
+Whether or not captcha fraud protection should be enabled. Required enum value from one of the following: None | Recaptcha | RecaptchaInvisible | BotDetect
+
+IsTest: 
+Whether or not this is a test event. Optional True or False value
+
+RequireKey: 
+Fraud protection setting if you require user input as a part of your queue flow. Required enum value from one of the following: NoKey | RequireKey | RequireUniqueKey. Can be combined with captcha, where captcha will be displayed first.
