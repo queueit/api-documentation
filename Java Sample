@@ -10,13 +10,44 @@ public class JavaAPISample {
 
     public static void main(String[] args) throws IOException {
         JavaAPISample apiEvent = new JavaAPISample();
+        apiEvent.GetEvents();
         apiEvent.GetEvent();
         apiEvent.CreateorUpdateEvent();
     }
-        
-    //Get an Event
+     
+    //Get Events
     private void GetEvent() throws IOException {
         String url = "https://{customerid}.api2.test.queue-it.net/2_0/event";
+        String apiKey = "Your api key available at /account/security page under APi-keys tab in Go platform";
+
+        try {
+            //make connection
+            URL resource = new URL(url);
+            URLConnection connection = resource.openConnection();
+            
+            //It Content Type is so importan to support JSON call
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setRequestProperty("api-key", apiKey);
+
+            //get result
+            BufferedReader result = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            StringBuilder response = new StringBuilder();
+            String inputLine;
+            while ((inputLine = result.readLine()) != null) {
+                response.append(inputLine);
+                System.out.println("Success! " + inputLine);
+            }
+            result.close();
+        } 
+        catch (IOException ex) {
+            System.out.println("Error! " + ex);
+            //Use your favorit logging framework to log the exceptoin
+        }
+    }
+     
+    //Get an Event
+    private void GetEvent() throws IOException {
+        String url = "https://{customerid}.api2.test.queue-it.net/2_0/event/{myEventId}";
         String apiKey = "Your api key available at /account/security page under APi-keys tab in Go platform";
 
         try {
@@ -47,7 +78,7 @@ public class JavaAPISample {
     //Create or update an Event
     private void CreateorUpdateEvent() throws IOException {
     
-        String url = "https://{customerid}.api2.test.queue-it.net/2_0/event/{myEventId}.";
+        String url = "https://{customerid}.api2.test.queue-it.net/2_0/event/{myEventId}";
         String apiKey = "Your api key available at /account/security page under APi-keys tab in Go platform";
 
         String eventData = "{\n"
